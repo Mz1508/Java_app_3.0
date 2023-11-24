@@ -72,13 +72,28 @@ pipeline{
                }
             }
         }
-        stage('JfrogArtifactory'){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{
-                   
-                   sh curl-X PUT-u admin:Admin123 -T ./target/kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://http://3.15.3.34:8082/artifactory/example-repo-local/
-               }
+       stage('JfrogArtif ') {
+            steps {
+                script {
+                    echo 'jfrog start...........................'
+                    def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "Jfrog"
+                    def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
+                    def uploadSpec = """{
+                        "files": [
+                            {
+                                "pattern": "target/(*)",
+                                "target": "libs-release-local/{1}",
+                                "flat": "false",
+                                "props": "${properties}",
+                                "exclusions": ["*.sha1", "*.md5"]
+                            }
+                        ]
+                    }"""
+                    def buildInfo = server.upload(uploadSpec)
+                    buildInfo.env.collect()
+                    server.publishBuildInfo(buildInfo)
+                    echo '<--------------- Jar Publish Ended --------------->'
+                }
             }
         }
         stage('Docker Image Build'){
