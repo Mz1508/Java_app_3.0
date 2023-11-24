@@ -77,7 +77,9 @@ pipeline{
                 script {
                     echo 'jfrog start...........................'
                     def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "Jfrog"
+                    echo '1'
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
+                    echo '2'
                     def uploadSpec = """{
                         "files": [
                             {
@@ -89,7 +91,9 @@ pipeline{
                             }
                         ]
                     }"""
+                    echo '3'
                     def buildInfo = server.upload(uploadSpec)
+                    echo '4'
                     buildInfo.env.collect()
                     server.publishBuildInfo(buildInfo)
                     echo '<--------------- Jar Publish Ended --------------->'
