@@ -57,7 +57,7 @@ pipeline{
             when { expression {  params.action == 'create' } }
             steps {
                 script {
-                    echo '------calling jrog'
+                    echo '------calling jfrog'
                     jfrogUpload()
                 }
             }
