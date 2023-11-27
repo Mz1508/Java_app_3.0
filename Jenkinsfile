@@ -53,5 +53,13 @@ pipeline{
                }
             }
         }
+        stage('JfrogArtif ') {
+            when { expression {  params.action == 'create' } }
+            steps {
+                script {
+                    jfrogUpload()
+                }
+            }
+        }
     }
 }
